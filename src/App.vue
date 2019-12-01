@@ -25,6 +25,7 @@ export default {
 html
   background-color: $color_grey_50
   +body1
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif
   user-select: none
 
   // @media screen and (prefers-color-scheme: dark)

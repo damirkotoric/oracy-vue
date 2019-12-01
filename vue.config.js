@@ -6,7 +6,10 @@ module.exports = {
       }
     }
   },
+  configureWebpack: {
+    devtool: 'source-map'
+  },
   devServer: {
-    proxy: 'https://librivox.org/'
+    proxy: 'http://localhost:3000',
   }
 };

@@ -7,17 +7,23 @@
       </div>
     </div>
     <div class="mainContent">
-      <h2>
-        Featured Audiobooks
-      </h2>
-      <List :audiobooks=featuredAudiobooks />
-      
+      <div v-if="this.loading == false">
+        <h2>
+          Featured Audiobooks
+        </h2>
+        <List :audiobooks=featuredAudiobooks />
+      </div>
+      <div v-else>
+        Loading...
+      </div>
+    </div>
+    <div class="mainFooter">
+      Built by <a href="https://twitter.com/damirkotoric" target="_blank">@damirkotoric</a>
     </div>
   </div>
 </template>
 
 <script>
-import featuredAudiobookIds from '@/data/featuredAudiobookIds.json'
 import List from '@/components/List.vue'
 
 export default {
@@ -27,22 +33,23 @@ export default {
   },
   data() {
     return {
-      featuredAudiobooks: []
+      featuredAudiobooks: [],
+      loading: true
     }
   },
   mounted() {
-    featuredAudiobookIds.forEach(function(value) {
-      fetch('/api/feed/audiobooks/?id='+value+'&format=json&extended=1')
-        .then(res => res.json())
-        .then(
-          (result) => {
-            this.featuredAudiobooks.push(result.books[Object.keys(result.books)[0]])
-          },
-          (error) => {
-            console.log(error)
-          }
-        )
-    }.bind(this))
+    // Grab featuredAudiobooks from Oracy API via AJAX call.
+    fetch('/featured')
+      .then(res => res.json())
+      .then(
+        (response) => {
+          this.featuredAudiobooks = response
+          this.loading = false
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
   }
 }
 </script>
@@ -52,9 +59,10 @@ export default {
 .main
   margin: 0 auto
   max-width: 620px
-  padding: 80px 0 160px
+  padding: 80px 0
 .mainHeader
   +body1
+  font-weight: 600
   div
     user-select: all
 .mainHeaderLogo
@@ -65,4 +73,11 @@ export default {
   h2
     margin-bottom: 5px
     +overline
+.mainFooter
+  +subtitle
+  color: $color_grey_500
+  padding: 140px 0 20px
+  text-align: center
+  a
+    color: $color_grey_800
 </style>
