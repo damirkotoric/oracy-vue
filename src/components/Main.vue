@@ -14,7 +14,9 @@
         <List :audiobooks=featuredAudiobooks />
       </div>
       <div v-else>
-        Loading...
+        <div class="mainContentLoader">
+          <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+        </div>
       </div>
     </div>
     <div class="mainFooter">
@@ -73,6 +75,10 @@ export default {
   h2
     margin-bottom: 5px
     +overline
+.mainContentLoader
+  display: flex
+  justify-content: center
+  padding: 100px 0
 .mainFooter
   +subtitle
   color: $color_grey_500

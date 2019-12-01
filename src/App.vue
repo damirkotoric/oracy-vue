@@ -16,6 +16,8 @@ export default {
 </script>
 
 <style lang="sass">
+@import "sass/vueMaterialTheme"
+
 @import "sass/reset"
 
 *, *:before, *:after
