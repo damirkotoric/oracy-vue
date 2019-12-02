@@ -10,13 +10,15 @@
       <template v-if="this.error">
         <div class="mainContentError">
           Error loading audiobooks.
-          Try again
+          <b-button variant="outline-primary" pill @click="retryLoadingAudiobooks">
+            Try again
+          </b-button>
         </div>
       </template>
       <template v-else>
         <template v-if="this.loading">
           <div class="mainContentLoader">
-            Loading...
+            <b-spinner type="grow" label="Loading..."></b-spinner>
           </div>
         </template>
         <template v-else>
@@ -48,20 +50,28 @@ export default {
       error: false
     }
   },
+  methods: {
+    loadAudiobooks: function() {
+      // Grab featuredAudiobooks from Oracy API via AJAX call.
+      fetch('/featured')
+        .then(res => res.json())
+        .then(
+          (response) => {
+            this.featuredAudiobooks = response
+            this.loading = false
+          },
+          (error) => {
+            console.log(error)
+            this.error = true
+          }
+        )
+    },
+    retryLoadingAudiobooks: function() {
+      this.loadAudiobooks()
+    }
+  },
   mounted() {
-    // Grab featuredAudiobooks from Oracy API via AJAX call.
-    fetch('/featured')
-      .then(res => res.json())
-      .then(
-        (response) => {
-          this.featuredAudiobooks = response
-          this.loading = false
-        },
-        (error) => {
-          console.log(error)
-          this.error = true
-        }
-      )
+    this.loadAudiobooks()
   }
 }
 </script>

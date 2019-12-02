@@ -1,31 +1,30 @@
 <template>
   <div id="app">
     <Main />
+    <ConnectivityChecker />
   </div>
 </template>
 
 <script>
 import Main from '@/components/Main.vue'
+import ConnectivityChecker from '@/components/ConnectivityChecker.vue'
 
 export default {
   name: 'app',
   components: {
-    Main
+    Main,
+    ConnectivityChecker
   }
 }
 </script>
 
 <style lang="sass">
-@import "sass/reset"
-
-*, *:before, *:after
-  -moz-box-sizing: border-box
-  box-sizing: border-box
+@import "sass/bootstrapTheme"
+@import "~bootstrap/scss/bootstrap.scss"
+@import "~bootstrap-vue/src/index.scss"
 
 html
-  background-color: $color_grey_50
   +body1
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif
   user-select: none
 
   // @media screen and (prefers-color-scheme: dark)

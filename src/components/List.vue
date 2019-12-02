@@ -54,6 +54,7 @@ export default {
 
 .listItemAuthor
   +body2
+  color: $color_grey_600
   margin-bottom: 10px
 
 .listItemTeaser
