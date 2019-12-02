@@ -7,17 +7,25 @@
       </div>
     </div>
     <div class="mainContent">
-      <div v-if="this.loading == false">
-        <h2>
-          Featured Audiobooks
-        </h2>
-        <List :audiobooks=featuredAudiobooks />
-      </div>
-      <div v-else>
-        <div class="mainContentLoader">
-          <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+      <template v-if="this.error">
+        <div class="mainContentError">
+          Error loading audiobooks.
+          Try again
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <template v-if="this.loading">
+          <div class="mainContentLoader">
+            Loading...
+          </div>
+        </template>
+        <template v-else>
+          <h2>
+            Featured Audiobooks
+          </h2>
+          <List :audiobooks=featuredAudiobooks />
+        </template>
+      </template>
     </div>
     <div class="mainFooter">
       Built by <a href="https://twitter.com/damirkotoric" target="_blank">@damirkotoric</a>
@@ -36,7 +44,8 @@ export default {
   data() {
     return {
       featuredAudiobooks: [],
-      loading: true
+      loading: true,
+      error: false
     }
   },
   mounted() {
@@ -50,6 +59,7 @@ export default {
         },
         (error) => {
           console.log(error)
+          this.error = true
         }
       )
   }
@@ -59,8 +69,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="sass" scoped>
 .main
+  display: flex
+  flex-direction: column
   margin: 0 auto
   max-width: 620px
+  min-height: 100vh
   padding: 80px 0
 .mainHeader
   +body1
@@ -79,8 +92,14 @@ export default {
   display: flex
   justify-content: center
   padding: 100px 0
+.mainContentError
+  text-align: center
+  button
+    display: block
+    margin: 20px auto 0
 .mainFooter
   +subtitle
+  margin-top: auto
   color: $color_grey_500
   padding: 140px 0 20px
   text-align: center
