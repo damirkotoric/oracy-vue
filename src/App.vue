@@ -17,7 +17,6 @@ export default {
 
 <style lang="sass">
 @import "sass/vueMaterialTheme"
-
 @import "sass/reset"
 
 *, *:before, *:after

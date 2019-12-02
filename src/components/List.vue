@@ -35,14 +35,19 @@ export default {
 
 .listItemImage
   background: $color_grey_100
+  display: block
+  height: 140px
   margin-right: 20px
+  width: 140px
   img
+    display: block
     height: 140px
+    max-width: none !important
     object-fit: cover
     width: 140px
 
 .listItemContent
-  user-select: all
+  user-select: text
 
 .listItemTitle
   margin-bottom: 5px

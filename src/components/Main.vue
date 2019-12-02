@@ -66,7 +66,7 @@ export default {
   +body1
   font-weight: 600
   div
-    user-select: all
+    user-select: text
 .mainHeaderLogo
   height: 50px
   margin-bottom: 10px
@@ -85,5 +85,5 @@ export default {
   padding: 140px 0 20px
   text-align: center
   a
-    color: $color_grey_800
+    color: $color_grey_800 !important
 </style>
