@@ -27,12 +27,11 @@ html
   +body1
   user-select: none
 
-  // @media screen and (prefers-color-scheme: dark)
-  //   &
-  //     background-color: $color_grey_900
-  //     color: $color_grey_50
-
 body
+  @media (prefers-color-scheme: dark)
+    &
+      background-color: $color_grey_900
+      color: $color_grey_100
 
 h1
   +h1

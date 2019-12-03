@@ -1,7 +1,10 @@
 <template>
   <div class="main">
     <div class="mainHeader">
-      <h1><img src="@/assets/logo_wordmark.svg" class="mainHeaderLogo" alt="Oracy" /></h1>
+      <h1>
+        <img class="mainHeaderLogo -light" src="@/assets/logo_wordmark.svg" alt="Oracy" />
+        <img class="mainHeaderLogo -dark" src="@/assets/logo_wordmark_white.svg" alt="Oracy" />
+      </h1>
       <div>
         Enjoy 50K+ public domain audiobooks, completely free and without ads.
       </div>
@@ -22,7 +25,7 @@
           </div>
         </template>
         <template v-else>
-          <h2>
+          <h2 class="mainContentListTitle">
             Featured Audiobooks
           </h2>
           <List :audiobooks=featuredAudiobooks />
@@ -93,6 +96,13 @@ export default {
 .mainHeaderLogo
   height: 50px
   margin-bottom: 10px
+  &.-light
+    @media (prefers-color-scheme: dark)
+      display: none
+  &.-dark
+    display: none
+    @media (prefers-color-scheme: dark)
+      display: block
 .mainContent
   margin-top: 50px
   h2
@@ -114,5 +124,7 @@ export default {
   padding: 140px 0 20px
   text-align: center
   a
-    color: $color_grey_800 !important
+    color: $color_grey_800
+    @media (prefers-color-scheme: dark)
+      color: $color_grey_400
 </style>
