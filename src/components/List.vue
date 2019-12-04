@@ -7,7 +7,7 @@
       <div class="listItemContent">
         <h6 class="listItemTitle">{{audiobook.title}}</h6>
         <div class="listItemAuthor">By {{audiobook.creator}}</div>
-        <p class="listItemTeaser">{{audiobook.description}}</p>
+        <p class="listItemTeaser">{{audiobook.description.substring(0, 265)}}...</p>
       </div>
     </div>
   </div>
@@ -24,7 +24,6 @@ export default {
 
 <style lang="sass" scoped>
 .list
-  overflow: hidden
 
 .listItem
   align-items: flex-start
