@@ -6,11 +6,16 @@
         <img class="mainHeaderLogo -dark" src="@/assets/logo_wordmark_white.svg" alt="Oracy" />
       </h1>
       <div>
-        Enjoy 50K+ public domain audiobooks, completely free and without ads.
+        Enjoy over 10K public domain audiobooks, completely free and without ads.
       </div>
     </div>
     <div class="mainContent">
-      <template v-if="this.error">
+      <template v-if="this.loading">
+        <div class="mainContentLoader">
+          <b-spinner type="grow" label="Loading..."></b-spinner>
+        </div>
+      </template>
+      <template v-else-if="this.error">
         <div class="mainContentError">
           Error loading audiobooks.
           <b-button variant="outline-primary" pill @click="retryLoadingAudiobooks">
@@ -19,17 +24,10 @@
         </div>
       </template>
       <template v-else>
-        <template v-if="this.loading">
-          <div class="mainContentLoader">
-            <b-spinner type="grow" label="Loading..."></b-spinner>
-          </div>
-        </template>
-        <template v-else>
-          <h2 class="mainContentListTitle">
-            Featured Audiobooks
-          </h2>
-          <List :audiobooks=featuredAudiobooks />
-        </template>
+        <h2 class="mainContentListTitle">
+          Featured Audiobooks
+        </h2>
+        <List :audiobooks=featuredAudiobooks />
       </template>
     </div>
     <div class="mainFooter">
@@ -55,8 +53,9 @@ export default {
   },
   methods: {
     loadAudiobooks: function() {
+      this.loading = true
       // Grab featuredAudiobooks from Oracy API via AJAX call.
-      fetch('/featured')
+      fetch(process.env.VUE_APP_API_ENDPOINT + '/featured')
         .then(res => res.json())
         .then(
           (response) => {
@@ -65,6 +64,7 @@ export default {
           },
           (error) => {
             console.log(error)
+            this.loading = false
             this.error = true
           }
         )
