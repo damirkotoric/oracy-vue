@@ -87,7 +87,11 @@ export default {
   margin: 0 auto
   max-width: 620px
   min-height: 100vh
-  padding: 80px 0
+  padding: 80px 15px 30px
+  @media (min-width: $breakpoint_1)
+    padding-bottom: 80px
+    padding-left: 0
+    padding-right: 0
 .mainHeader
   +body1
   font-weight: 600

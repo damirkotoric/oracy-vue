@@ -1,13 +1,13 @@
 <template>
   <div class="list">
-    <div class="listItem" v-for="(audiobook, index) in audiobooks" :key="audiobook.id">
+    <div class="listItem" v-for="audiobook in audiobooks" :key="audiobook.id">
       <div class="listItemImage">
-        <img :src="audiobooksImageSrc[index]" alt=""/>
+        <img :src="audiobook.coverImageSrc" alt=""/>
       </div>
       <div class="listItemContent">
-        <h6 class="listItemTitle">{{audiobook.metadata.title}}</h6>
-        <div class="listItemAuthor">By {{audiobook.metadata.creator}}</div>
-        <p class="listItemTeaser">{{audiobook.metadata.description}}</p>
+        <h6 class="listItemTitle">{{audiobook.title}}</h6>
+        <div class="listItemAuthor">By {{audiobook.creator}}</div>
+        <p class="listItemTeaser">{{audiobook.description}}</p>
       </div>
     </div>
   </div>
@@ -18,17 +18,6 @@ export default {
   name: 'List',
   props: {
     audiobooks: Array
-  },
-  data() {
-    return {
-      audiobooksImageSrc: Array
-    }
-  },
-  created() {
-    this.audiobooksImageSrc = this.audiobooks.map(function(audiobook) {
-      let imageName = audiobook.files[audiobook.files.findIndex(file => file.format === "JPEG")].name
-      return ("https://" + audiobook.d1 + audiobook.dir + "/" + imageName)
-    })
   }
 }
 </script>
