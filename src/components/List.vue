@@ -1,21 +1,17 @@
 <template>
   <div class="list">
-    <div class="listItem" v-for="audiobook in audiobooks" :key="audiobook.id">
-      <div class="listItemImage">
-        <img :src="audiobook.coverImageSrc" alt=""/>
-      </div>
-      <div class="listItemContent">
-        <h6 class="listItemTitle">{{audiobook.title}}</h6>
-        <div class="listItemAuthor">By {{audiobook.creator}}</div>
-        <p class="listItemTeaser">{{audiobook.description.substring(0, 265)}}...</p>
-      </div>
-    </div>
+    <ListItem v-for="audiobook in audiobooks" :key="audiobook.id" :audiobook=audiobook />
   </div>
 </template>
 
 <script>
+import ListItem from '@/components/ListItem.vue'
+
 export default {
   name: 'List',
+  components: {
+    ListItem
+  },
   props: {
     audiobooks: Array
   }
@@ -25,45 +21,4 @@ export default {
 <style lang="sass" scoped>
 .list
 
-.listItem
-  align-items: flex-start
-  border-bottom: 1px solid $color_grey_100
-  display: flex
-  padding: 20px 0
-  @media (prefers-color-scheme: dark)
-    border-bottom: 1px solid $color_grey_800
-  &:last-child
-    border-bottom: none
-
-.listItemImage
-  background: $color_grey_100
-  display: block
-  height: 140px
-  margin-right: 20px
-  width: 140px
-  @media (prefers-color-scheme: dark)
-    background: $color_grey_800
-  img
-    display: block
-    height: 140px
-    max-width: none !important
-    object-fit: cover
-    width: 140px
-
-.listItemContent
-  user-select: text
-
-.listItemTitle
-  margin-bottom: 5px
-
-.listItemAuthor
-  +body2
-  color: $color_grey_600
-  margin-bottom: 10px
-  @media (prefers-color-scheme: dark)
-    color: $color_grey_400
-
-.listItemTeaser
-  +body2
-  margin-bottom: 0
 </style>

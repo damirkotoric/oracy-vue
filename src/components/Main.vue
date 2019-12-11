@@ -6,7 +6,7 @@
         <img class="mainHeaderLogo -dark" src="@/assets/logo_wordmark_white.svg" alt="Oracy" />
       </h1>
       <div>
-        Enjoy over 10K public domain audiobooks, completely free and without ads.
+        Enjoy <!--over 10K -->public domain audiobooks, completely free and without ads.
       </div>
     </div>
     <div class="mainContent">
@@ -88,8 +88,8 @@ export default {
   max-width: 620px
   min-height: 100vh
   padding: 80px 15px 30px
-  @media (min-width: $breakpoint_1)
-    padding-bottom: 80px
+  @media (min-width: $breakpoint_2)
+    padding-bottom: 120px
     padding-left: 0
     padding-right: 0
 .mainHeader
