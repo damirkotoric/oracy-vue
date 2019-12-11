@@ -1,10 +1,10 @@
 <template>
-  <div :class="{'listItem ':true, '-playing':(playing === true)}">
-    <div class="listItemImage" @click="playPauseItem">
+  <div :class="{'listItem ':true, '-playing':isPlaying}">
+    <div class="listItemImage">
       <img :src="audiobook.coverImageSrc" alt=""/>
       <div class="listItemImageControls">
-        <IconPlay class="listItemImageControlsPlay" />
-        <IconPause class="listItemImageControlsPause" />
+        <IconPlay class="listItemImageControlsPlay" title="Play" @click="playItem" />
+        <IconPause class="listItemImageControlsPause" title="Pause" @click="pauseItem" />
       </div>
     </div>
     <div class="listItemContent">
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import { eventBus } from '../main'
 import IconPlay from 'vue-material-design-icons/Play.vue'
 import IconPause from 'vue-material-design-icons/Pause.vue'
 
@@ -26,33 +25,25 @@ export default {
     IconPause,
     IconPlay,
   },
-  created() {
-    eventBus.$on('playAudio', (audiobook) => {
-      if (this.audiobook === audiobook) {
-        this.playing = true
+  computed: {
+    isPlaying() {
+      if (this.$store.state.playerStatus === 'play' && this.$store.state.activeAudiobook === this.audiobook) {
+        return true
+      } else {
+        return false
       }
-    })
-    eventBus.$on('pauseAudio', (audiobook) => {
-      if (this.audiobook === audiobook) {
-        this.playing = false
-      }
-    })
-  },
-  data() {
-    return {
-      playing: false,
     }
   },
   props: {
     audiobook: Object
   },
   methods: {
-    playPauseItem: function() {
-      if (this.playing) {
-        eventBus.$emit('pauseAudio', this.audiobook)
-      } else {
-        eventBus.$emit('playAudio', this.audiobook)
-      }
+    playItem: function() {
+      this.$store.commit('setActiveAudiobook', this.audiobook)
+      this.$store.commit('setPlayerStatus', 'play')
+    },
+    pauseItem: function() {
+      this.$store.commit('setPlayerStatus', 'pause')
     }
   }
 }
@@ -111,11 +102,16 @@ export default {
   top: 0
   transition: opacity 0.3s
   width: 100%
+  @media (prefers-color-scheme: dark)
+    background: rgba(white, 0.5)
   &:hover
     opacity: 1
   > svg
+    fill: white
     height: 50px
     width: 50px
+    @media (prefers-color-scheme: dark)
+      fill: black
 
 .listItemImageControlsPlay
   .-playing &

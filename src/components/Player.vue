@@ -1,19 +1,23 @@
 <template>
-  <div :class="{'player ':true, '-mini':(view === 'mini'), '-full':(view === 'full'), '-playing':(playing === true), '-paused':(paused === true)}" @click="openFullView">
+  <div :class="{'player':true, '-mini':(view === 'mini'), '-full':(view === 'full'), '-playing':(playerStatus === 'play'), '-paused':(playerStatus === 'pause')}" @click="openFullView">
     <div class="playerMain">
-      <img class="playerCoverImage" src="https://ia801607.us.archive.org/15/items/thoughts_on_art_and_life_1702_librivox/thoughts_art_life_1703_itemimage.jpg?cnt=0" alt="">
+      <img class="playerCoverImage" :src="activeAudiobook.coverImageSrc" alt="">
       <div class="playerInfoControls">
         <div class="playerInfo">
-          <div class="playerTitle">Thoughts on Art and Life</div>
-          <div class="playerAuthor">By Leonardo Da Vinci</div>
+          <div class="playerTitle">{{activeAudiobook.title}}</div>
+          <div class="playerAuthor">{{activeAudiobook.creator}}</div>
         </div>
         <div class="playerControls">
           <div class="playerControlsRewind">
             <IconRewind title="Rewind 10 seconds" />
           </div>
           <div class="playerControlsPlayPause">
-            <IconPlay class="playerControlsPlay" title="Play" @click="triggerPlay" />
-            <IconPause class="playerControlsPause" title="Pause" @click="triggerPause" />
+            <div class="playerControlsPlay" @click="triggerPlay">
+              <IconPlay title="Play" />
+            </div>
+            <div class="playerControlsPause" @click="triggerPause">
+              <IconPause title="Pause" />
+            </div>
           </div>
           <div class="playerControlsForward">
             <IconForward title="Forward 10 seconds" />
@@ -28,7 +32,6 @@
 </template>
 
 <script>
-import { eventBus } from '../main'
 import {Howl} from 'howler'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconForward from 'vue-material-design-icons/FastForward10.vue'
@@ -47,19 +50,18 @@ export default {
   },
   data() {
     return {
-      paused: false,
-      playing: false,
-      sound: Howl,
+      activeSound: undefined,
+      playHistory: [],
       view: 'hidden'
     }
   },
-  created() {
-    eventBus.$on('pauseAudio', (audiobook) => {
-      this.pause(audiobook)
-    })
-    eventBus.$on('playAudio', (audiobook) => {
-      this.play(audiobook)
-    })
+  computed: {
+    activeAudiobook() {
+      return this.$store.state.activeAudiobook
+    },
+    playerStatus() {
+      return this.$store.state.playerStatus
+    }
   },
   methods: {
     collapseFullView: function(e) {
@@ -72,31 +74,63 @@ export default {
     },
     triggerPause: function(e) {
       e.stopPropagation()
-      this.pause()
+      this.$store.commit('setPlayerStatus', 'pause')
     },
-    pause: function(audiobook) {
-      if (audiobook) {
-        // Feature Todo: save paused audiobook to cookie for continuation.
-      }
-      this.playing = false
-      this.paused = true
-      this.sound.pause()
+    pause: function() {
+      this.activeSound.pause()
     },
     triggerPlay: function(e) {
       e.stopPropagation()
-      this.play()
+      this.$store.commit('setPlayerStatus', 'play')
     },
-    play: function(audiobook) {
-      this.playing = true
-      this.paused = false
-      this.view = 'mini'
-      this.sound = new Howl({
-        html5: true,
-        src: [audiobook.audioTracks[0]]
-      })
-      this.sound.play()
+    play: function() {
+      if (this.activeSound) {
+        this.activeSound.pause()
+      }
+      function getAudiobookFromPlayHistory(obj, arr) {
+        var i
+        for (i = 0; i < arr.length; i++) {
+          if (arr[i].audiobook === obj) {
+            return i
+          }
+        }
+        return -1
+      }
+      let historyIndex = getAudiobookFromPlayHistory(this.activeAudiobook, this.playHistory)
+      if (historyIndex == -1) { 
+        // Not found in history. Play from the start.
+        if (this.view == 'hidden') {
+          this.view = 'mini'
+        }
+        let sound = new Howl({
+          html5: true,
+          src: [this.activeAudiobook.audioTracks[0]]
+        })
+        this.activeSound = sound
+        this.playHistory.push({
+          'audiobook': this.activeAudiobook,
+          'sound': sound
+        })
+        sound.play()
+      } else {
+        // Continue playing last played sound.
+        // Todo: be able to continue playing sounds from playHistory.
+        this.activeSound.play()
+      }
     }
-  } 
+  },
+  watch: {
+    activeAudiobook() {
+    },
+    playerStatus(newStatus) {
+      if (newStatus == 'play') {
+        this.play()
+      }
+      if (newStatus == 'pause') {
+        this.pause()
+      }
+    }
+  }
 }
 </script>
 
@@ -106,6 +140,8 @@ export default {
   color: $color_grey_900
   position: fixed
   &.-mini
+    background: rgba(white, 0.7)
+    backdrop-filter: blur(10px)
     border-radius: 10px
     box-shadow: 0 4px 20px rgba(black, 0.2)
     bottom: 10px
@@ -116,14 +152,11 @@ export default {
     max-width: 700px
     padding: 10px 0 10px 10px
     width: calc(100% - 20px)
-    @media (prefers-color-scheme: dark)
-      background: $color_grey_100
     @media (min-width: $breakpoint_2)
       bottom: 20px
-      height: 90px
+      height: 80px
       left: 50%
       margin: 0
-      padding: 15px 0 15px 15px
       transform: translateX(-50%)
       width: 100%
   &.-full
@@ -232,28 +265,31 @@ export default {
     svg
       transform: scale(0.97)
 
-.playerControlsPlayPause
+.playerControlsPlay, .playerControlsPause
   height: 70px
-  margin: 0 10px
   padding: 10px
-  width: 70px
   @media (min-width: $breakpoint_1)
-    margin: 0 20px
+    padding: 10px
   .-full &
     background: black
     border-radius: 50%
+    height: 90px
     margin: 0 40px
-    @media (min-width: $breakpoint_2)
-      height: 90px
-      width: 90px
+    width: 90px
     @media (prefers-color-scheme: dark)
       background: $color_grey_100
   svg
-    fill: white
     height: 100%
-    width: 100%
+    width: 70px
     @media (prefers-color-scheme: dark)
       fill: $color_grey_900
+    .-mini &
+      fill: black
+    .-full &
+      fill: white
+      @media (prefers-color-scheme: dark)
+        fill: black
+
 
 .playerControlsPlay
   .-playing &
@@ -263,6 +299,9 @@ export default {
   display: none
   .-playing &
     display: block
+  .-full &
+    svg
+      padding: 6px
 
 .playerControlsRewind, .playerControlsForward
   height: 46px
@@ -287,10 +326,9 @@ export default {
 
 .playerCollapse
   cursor: pointer
-  height: 100px
-  margin-bottom: 40px
+  height: 140px
   opacity: 0.5
-  padding: 20px
+  padding: 20px 20px 60px
   transition: opacity 0.3s
   width: 100px
   &:hover
