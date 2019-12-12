@@ -8,12 +8,12 @@ export const store = new Vuex.Store({
     activeAudiobook: Object,
     playerStatus: ''
   },
-  getters : {
-    getActiveAudiobook() {
-      return this.state.activeAudiobook
+  getters: {
+    getActiveAudiobook: state => {
+      return state.activeAudiobook
     },
-    getPlayerStatus() {
-      return this.state.playerStatus
+    getPlayerStatus: state => {
+      return state.playerStatus
     }
   },
   mutations: {

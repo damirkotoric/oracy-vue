@@ -57,10 +57,10 @@ export default {
   },
   computed: {
     activeAudiobook() {
-      return this.$store.state.activeAudiobook
+      return this.$store.getters.getActiveAudiobook
     },
     playerStatus() {
-      return this.$store.state.playerStatus
+      return this.$store.getters.getPlayerStatus
     }
   },
   methods: {
@@ -84,9 +84,6 @@ export default {
       this.$store.commit('setPlayerStatus', 'play')
     },
     play: function() {
-      if (this.activeSound) {
-        this.activeSound.pause()
-      }
       function getAudiobookFromPlayHistory(obj, arr) {
         var i
         for (i = 0; i < arr.length; i++) {
@@ -106,23 +103,21 @@ export default {
           html5: true,
           src: [this.activeAudiobook.audioTracks[0]]
         })
-        this.activeSound = sound
         this.playHistory.push({
           'audiobook': this.activeAudiobook,
           'sound': sound
         })
-        sound.play()
+        this.activeSound = sound
       } else {
         // Continue playing last played sound.
-        // Todo: be able to continue playing sounds from playHistory.
-        this.activeSound.play()
+        this.activeSound = this.playHistory[historyIndex].sound
       }
+      this.activeSound.play()
     }
   },
   watch: {
-    activeAudiobook() {
-    },
     playerStatus(newStatus) {
+      // console.log('new status ' + newStatus)
       if (newStatus == 'play') {
         this.play()
       }

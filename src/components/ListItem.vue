@@ -32,6 +32,12 @@ export default {
       } else {
         return false
       }
+    },
+    activeAudiobook() {
+      return this.$store.state.activeAudiobook
+    },
+    playerStatus() {
+      return this.$store.state.playerStatus
     }
   },
   props: {
@@ -39,7 +45,11 @@ export default {
   },
   methods: {
     playItem: function() {
-      this.$store.commit('setActiveAudiobook', this.audiobook)
+      if(this.activeAudiobook != this.audiobook) {
+        this.$store.commit('setPlayerStatus', 'pause')
+        this.$store.commit('setActiveAudiobook', this.audiobook)
+      }
+      console.log(this.playerStatus)
       this.$store.commit('setPlayerStatus', 'play')
     },
     pauseItem: function() {
